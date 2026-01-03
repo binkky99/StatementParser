@@ -3,8 +3,8 @@ from .registry import BankRegistry
 from .categorizer import Categorizer
 
 __all__ = [
-    "BankStatementParser",
-    "NormalizedRecord",
-    "BankRegistry",
-    "Categorizer",
+  "BankStatementParser",
+  "NormalizedRecord",
+  "BankRegistry",
+  "Categorizer",
 ]
