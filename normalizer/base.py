@@ -11,6 +11,7 @@ class NormalizedRecord:
   amount: Decimal
   category: Optional[str] = None
   raw: dict | None = None
+  member_name: Optional[str] = None
 
 class BankStatementParser:
   """
