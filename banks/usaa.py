@@ -7,7 +7,7 @@ class USAAParser(BankStatementParser):
   delimiter = "\t"
   has_header = False
 
-def parse_rows(self, rows):
-  raise NotImplementedError("Implement USAA mapping")
+  def parse_rows(self, rows):
+    raise NotImplementedError("Implement USAA mapping")
 
 BankRegistry.register("usaa", USAAParser)

@@ -1,5 +1,5 @@
 from typing import Type
-from base import BankStatementParser
+from .base import BankStatementParser
 
 class BankRegistry:
   _parsers: dict[str, Type[BankStatementParser]] = {}

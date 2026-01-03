@@ -2,14 +2,13 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from typing import Iterable, Optional
-from exceptions import ValidationError
+from .exceptions import ValidationError
 
 @dataclass
 class NormalizedRecord:
   transaction_date: date
   description: str
   amount: Decimal
-  balance: Optional[Decimal]
   category: Optional[str] = None
   raw: dict | None = None
 
