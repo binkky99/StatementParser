@@ -5,6 +5,7 @@ from normalizer.readers import DelimitedFileReader
 from normalizer.categorizer import Categorizer
 from normalizer.registry import BankRegistry
 from normalizer.writers import write_csv
+from normalizer.read_existing import load_existing_keys
 
 CATEGORY_RULES = {
   # "Groceries": r"whole foods|trader joe",
@@ -71,12 +72,26 @@ if __name__ == "__main__":
   
   output_path = output_dir / "Normalized_Statement.txt"
 
+  existing_keys = load_existing_keys(output_path)
+  
   recs, unmapped = run(args.bank, args.input)
+  new_records = []
+  for r in recs:
+    if r.key not in existing_keys:
+      new_records.append(r)
 
-  write_csv(output_path, recs)
+  write_csv(output_path, new_records, append=True)
 
-  print(f"Parsed {len(recs)} records")
-  if unmapped:
-    print("Unmapped descriptions:")
-    for u in sorted(unmapped):
-      print(" -", u)
+  added_count = len(new_records)
+  parsed_count = len(recs)
+  skipped_count = parsed_count - added_count
+
+  print(f"Parsed records : {parsed_count}")
+  print(f"Added records  : {added_count}")
+  print(f"Skipped records: {skipped_count}")
+  print(f"Output file    : {output_path}")
+
+  # if unmapped:
+  #   print("Unmapped descriptions:")
+  #   for u in sorted(unmapped):
+  #     print(" -", u)

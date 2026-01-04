@@ -1,17 +1,20 @@
 from datetime import datetime
 from decimal import Decimal
-from normalizer.base import BankStatementParser, NormalizedRecord
+from normalizer.base import BankStatementParser
 from normalizer.registry import BankRegistry
 
 class USAAParser(BankStatementParser):
+  bank = "usaa"
   delimiter = ","
   has_header = True
 
   def parse_rows(self, rows):
     records = []
     for row in rows:
-      record = NormalizedRecord(
-        transaction_date=datetime.strptime(row["Date"], "%Y-%m-%d").date(),
+      record = self._record(
+        transaction_date=datetime.strptime(
+          row["Date"], "%Y-%m-%d"
+        ).date(),
         description=row["Original Description"],
         amount=Decimal(row["Amount"]),
         raw=row,
@@ -20,4 +23,4 @@ class USAAParser(BankStatementParser):
       records.append(record)
     return records
 
-BankRegistry.register("usaa", USAAParser)
+BankRegistry.register(USAAParser.bank, USAAParser)
