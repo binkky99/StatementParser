@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 from banks import register_all
 from normalizer.readers import DelimitedFileReader
@@ -9,12 +10,34 @@ CATEGORY_RULES = {
   # "Groceries": r"whole foods|trader joe",
 }
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Normalize bank statements into a standard CSV format"
+    )
+
+    parser.add_argument(
+        "bank",
+        help="Bank identifier (e.g. wells_fargo, citibank, usaa)",
+    )
+
+    parser.add_argument(
+        "input",
+        type=Path,
+        help="Input statement file (.csv or .tsv)",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        help="Output CSV path direcotry (default: ./output/normalized_statment.csv)",
+    )
+
+    return parser.parse_args()
+
 def run(bank: str, path: Path):
-  print(BankRegistry._parsers)
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
-  print(type(parser))
-  print(parser.__class__.__mro__)
 
   reader = DelimitedFileReader(path, parser.delimiter, parser.has_header)
   rows = reader.read()
@@ -33,22 +56,27 @@ def run(bank: str, path: Path):
 
 if __name__ == "__main__":
   import sys
+  args = parse_args()
+
   register_all()
   
-  bank = sys.argv[1]
-  input_path = Path(sys.argv[2])
+  if args.output is not None:
+    if not args.output.is_dir():
+      print("Error: output path does not exist: {args.output}")
+      sys.exit(2)
+    output_dir = args.output
+  else:
+    output_dir = Path.cwd() / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+  
+  output_path = output_dir / "Normalized_Statement.txt"
 
-  output_path = (
-      input_path.with_suffix("")  # remove .csv / .txt
-      .with_name(input_path.stem + "_normalized.csv")
-  )
-
-  recs, unmapped = run(bank, input_path)
+  recs, unmapped = run(args.bank, args.input)
 
   write_csv(output_path, recs)
 
   print(f"Parsed {len(recs)} records")
   if unmapped:
     print("Unmapped descriptions:")
-  for u in sorted(unmapped):
-    print(" -", u)
+    for u in sorted(unmapped):
+      print(" -", u)
