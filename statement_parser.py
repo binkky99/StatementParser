@@ -13,30 +13,37 @@ CATEGORY_RULES = {
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Normalize bank statements into a standard CSV format"
+      description="Normalize bank statements into a standard CSV format"
     )
 
     parser.add_argument(
-        "bank",
-        help="Bank identifier (e.g. wells_fargo, citibank, usaa)",
+      "bank",
+      help="Bank identifier (e.g. wells_fargo, citibank, usaa)",
     )
 
     parser.add_argument(
-        "input",
-        type=Path,
-        help="Input statement file (.csv or .tsv)",
+      "input",
+      type=Path,
+      help="Input statement file (.csv or .tsv)",
     )
 
     parser.add_argument(
-        "-o",
-        "--output",
-        type=Path,
-        help="Output CSV path direcotry (default: ./output/normalized_statment.csv)",
+      "-o",
+      "--output",
+      type=Path,
+      help="Output CSV path direcotry (default: ./output/normalized_statment.csv)",
+    )
+
+    parser.add_argument(
+      "-c",
+      "--categories"
+      type=Path,
+      help="Categories file that provides mapping from Description to Category",
     )
 
     return parser.parse_args()
 
-def run(bank: str, path: Path):
+def run(bank: str, path: Path, categoryPath: Path):
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
 
