@@ -14,7 +14,7 @@ class NormalizedRecord:
   amount: Decimal
   category: Optional[str] = None
   key: str = field(init=False)
-  raw: dict | None = None
+  raw: dict | None = field(default=None, compare=False)
   member_name: Optional[str] = None
 
   def __post_init__(self) -> None:
@@ -43,16 +43,6 @@ class NormalizedRecord:
     """
     if not self.key:
       self.key = self._generate_key()
-
-  def equivalent(self, other: "NormalizedRecord") -> bool:
-    return (
-      self.bank == other.bank and
-      self.transaction_date == other.transaction_date and
-      self.description == other.description and
-      self.amount == other.amount and
-      self.category == other.category and
-      self.member_name == other.member_name
-    )
 
 class BankStatementParser:
   """
