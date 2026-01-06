@@ -1,24 +1,15 @@
-import csv
-from datetime import datetime
-from decimal import Decimal
 from pathlib import Path
 from .base import NormalizedRecord
+from banks.normalized import NormalizedParser
+from .readers import DelimitedFileReader
 
-def load_existing_keys(path: Path) -> set[str]:
-  if not path.exists():
-    return set()
+def load_existing_records(path: Path) -> dict[str, NormalizedRecord]:
+    if not path.exists():
+        return {}
 
-  keys = set()
-  with path.open(newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-      record = NormalizedRecord(
-        row["bank"],
-        datetime.strptime(
-          row["transaction_date"], "%Y-%m-%d"
-        ).date(),
-        row["description"],
-        Decimal(row["amount"])
-      )
-      keys.add(record.key)
-  return keys
+    parser = NormalizedParser()
+    reader = DelimitedFileReader(path, parser.delimiter, has_header=True)
+    rows = reader.read()
+
+    records = parser.parse_rows(rows)
+    return {r.key: r for r in records}

@@ -1,15 +1,19 @@
+from dataclasses import dataclass
 import re
 from typing import Pattern
 
 class Categorizer:
-  def __init__(self, rules: dict[str, str]):
-    # category -> regex
-    self._compiled: list[tuple[str, Pattern[str]]] = [
-      (cat, re.compile(expr, re.IGNORECASE)) for cat, expr in rules.items()
+  def __init__(self, rules: list[tuple[str, list[str]]]):
+    self._compiled: list[tuple[Pattern[str], list[str]]] = [
+      (re.compile(expr, re.IGNORECASE), categories)
+      for expr, categories in rules
     ]
 
-  def categorize(self, memo: str) -> str | None:
-    for category, pattern in self._compiled:
+  def categorize(self, memo: str) -> list[str]:
+    matches: list[str] = []
+
+    for pattern, categories in self._compiled:
       if pattern.search(memo):
-        return category
-    return None
+        matches.extend(categories)
+
+    return matches

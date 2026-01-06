@@ -3,26 +3,21 @@ from pathlib import Path
 from typing import Iterable
 from .base import NormalizedRecord
 
-def write_csv(
+def write_statement(
   path: Path, 
-  records: Iterable[NormalizedRecord],
-  append: bool = False
+  records: Iterable[NormalizedRecord]
 ) -> None:
-  write_header = not path.exists() or not append
-  
-  mode = "a" if append else "w"
-
-  with path.open(mode, newline="", encoding="utf-8") as f:
+  with path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
 
-    if write_header:
-      writer.writerow([
-        "bank",
-        "transaction_date",
-        "description",
-        "amount",
-        "category",
-      ])
+    writer.writerow([
+      "bank",
+      "transaction_date",
+      "description",
+      "amount",
+      "category",
+      "member_name"
+    ])
 
     for r in records:
       writer.writerow([
@@ -31,4 +26,14 @@ def write_csv(
         r.description,
         str(r.amount),
         r.category or "",
+        r.member_name or "",
       ])
+
+def write_unmapped(
+  path: Path, 
+  records: Iterable[str],
+) -> None:
+  with path.open("w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    for r in records:
+      writer.writerow([r])

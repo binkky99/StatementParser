@@ -18,6 +18,10 @@ class NormalizedRecord:
   member_name: Optional[str] = None
 
   def __post_init__(self) -> None:
+    if isinstance(self.category, str) and self.category.strip() == "":
+        self.category = None
+    if isinstance(self.member_name, str) and self.member_name.strip() == "":
+        self.member_name = None
     self.key = self._generate_key()
   
   def _generate_key(self) -> str:
@@ -38,7 +42,17 @@ class NormalizedRecord:
     Assign key if not already present.
     """
     if not self.key:
-      self.key = self.generate_key()
+      self.key = self._generate_key()
+
+  def equivalent(self, other: "NormalizedRecord") -> bool:
+    return (
+      self.bank == other.bank and
+      self.transaction_date == other.transaction_date and
+      self.description == other.description and
+      self.amount == other.amount and
+      self.category == other.category and
+      self.member_name == other.member_name
+    )
 
 class BankStatementParser:
   """
@@ -59,14 +73,17 @@ class BankStatementParser:
       transaction_date: date,
       description: str,
       amount: Decimal | None = None,
+      bank: str | None = None,
+      category: str | None = None,
       member_name: str | None = None,
       raw: dict | None = None
   ) -> NormalizedRecord:
     return NormalizedRecord(
-      bank=self.bank,
+      bank=bank if bank is not None else self.bank,
       transaction_date=transaction_date,
       description=description,
       amount=amount,
+      category=category,
       member_name=member_name,
       raw=raw,
     )
