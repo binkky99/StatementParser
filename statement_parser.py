@@ -44,6 +44,12 @@ def parse_args() -> argparse.Namespace:
       help="Categories file that provides mapping from Description to Category",
     )
 
+    parser.add_argument(
+      "--override",
+      action='store_true',
+      help="Override all categories regardless of if they are protected entries.",
+    )
+
     return parser.parse_args()
 
 def run(bank: str, path: Path, categoryPath: Path, credit: bool):
@@ -63,8 +69,10 @@ def run(bank: str, path: Path, categoryPath: Path, credit: bool):
 
   # post process of records.
   for r in records:
-    categories = categorizer.categorize(r.description)
-    r.category = categories[0] if categories else None
+    r.category = categorizer.categorize(
+      r.description,
+      existing=r.category,
+    )
     if credit:
       r.amount = -1 * r.amount
     if r.category is None:
