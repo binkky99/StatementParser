@@ -38,9 +38,15 @@ def parse_args() -> argparse.Namespace:
       help="Categories file that provides mapping from Description to Category",
     )
 
+    parser.add_argument(
+      "--credit",
+      action='store_true',
+      help="Categories file that provides mapping from Description to Category",
+    )
+
     return parser.parse_args()
 
-def run(bank: str, path: Path, categoryPath: Path):
+def run(bank: str, path: Path, categoryPath: Path, credit: bool):
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
 
@@ -55,9 +61,12 @@ def run(bank: str, path: Path, categoryPath: Path):
   categorizer = Categorizer(categoryRows)
   unmapped = set()
 
+  # post process of records.
   for r in records:
     categories = categorizer.categorize(r.description)
     r.category = categories[0] if categories else None
+    if credit:
+      r.amount = -1 * r.amount
     if r.category is None:
       unmapped.add(r.description)
   
@@ -69,7 +78,6 @@ def merge_records(
 ) -> tuple[list[NormalizedRecord], int, int, int]:
     added = 0
     updated = 0
-    unchanged = 0
 
     for record in incoming:
       old = existing.get(record.key)
@@ -102,7 +110,7 @@ if __name__ == "__main__":
 
   existing_records = load_existing_records(output_path)
   
-  parsed_records, unmapped = run(args.bank, args.input, args.categories)
+  parsed_records, unmapped = run(args.bank, args.input, args.categories, args.credit)
   merged, added, replaced = merge_records(existing_records, parsed_records)
 
   write_statement(output_path, merged)
