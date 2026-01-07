@@ -14,7 +14,10 @@ class CitiBankParser(BankStatementParser):
       try:
         amount=Decimal(row["Debit"])
       except InvalidOperation:
-        continue
+        try:
+          amount=Decimal(row["Credit"])
+        except InvalidOperation:
+          continue
       
       record = self._record(
         transaction_date=datetime.strptime(

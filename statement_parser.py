@@ -55,6 +55,7 @@ def parse_args() -> argparse.Namespace:
 def run(bank: str, path: Path, categoryPath: Path, credit: bool):
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
+  parser.credit = credit
 
   rows = DelimitedFileReader(path, parser.delimiter, parser.has_header).read()
   if categoryPath is not None and categoryPath.exists():
@@ -73,8 +74,6 @@ def run(bank: str, path: Path, categoryPath: Path, credit: bool):
       r.description,
       existing=r.category,
     )
-    if credit:
-      r.amount = -1 * r.amount
     if r.category is None:
       unmapped.add(r.description)
   
