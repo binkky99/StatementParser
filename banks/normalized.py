@@ -6,7 +6,7 @@ from normalizer.registry import BankRegistry
 class NormalizedParser(BankStatementParser):
   bank = "norm"
 
-  delimiter = ","
+  delimiter = "\t"
   has_header = True
 
   def parse_rows(self, rows):
