@@ -8,7 +8,7 @@ def write_statement(
   records: Iterable[NormalizedRecord]
 ) -> None:
   with path.open("w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
+    writer = csv.writer(f, delimiter="\t")
 
     writer.writerow([
       "bank",
