@@ -11,7 +11,6 @@ def write_statement(
     writer = csv.writer(f, delimiter="\t")
 
     writer.writerow([
-      "key",
       "bank",
       "transaction_date",
       "description",
@@ -22,7 +21,6 @@ def write_statement(
 
     for r in records:
       writer.writerow([
-        r.key,
         r.bank,
         r.transaction_date.isoformat(),
         r.description,
