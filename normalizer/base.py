@@ -32,9 +32,8 @@ class NormalizedRecord:
       self.bank.lower().strip(),
       self.transaction_date.isoformat(),
       self.description.strip().lower(),
-      f"{self.amount:.2f}",
+      f"{abs(self.amount):.2f}",
     ])
-
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
   
   def ensure_key(self) -> None:
@@ -50,6 +49,7 @@ class BankStatementParser:
   """
   bank: str | None = None
 
+  credit: bool = False
   delimiter: str = ","
   has_header: bool = True
 
@@ -72,7 +72,7 @@ class BankStatementParser:
       bank=bank if bank is not None else self.bank,
       transaction_date=transaction_date,
       description=description,
-      amount=amount,
+      amount=amount if not self.credit else amount * -1,
       category=category,
       member_name=member_name,
       raw=raw,
