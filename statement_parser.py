@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def run(bank: str, path: Path, categoryPath: Path, credit: bool):
+def run(bank: str, path: Path, categoryPath: Path, credit: bool, existing_records: dict[str, NormalizedRecord]):
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
   parser.credit = credit
@@ -70,10 +70,8 @@ def run(bank: str, path: Path, categoryPath: Path, credit: bool):
 
   # post process of records.
   for r in records:
-    r.category = categorizer.categorize(
-      r.description,
-      existing=r.category,
-    )
+    categorizer.apply(r, existing_records.get(r.key))
+    
     if r.category is None:
       unmapped.add(r.description)
   
@@ -117,7 +115,7 @@ if __name__ == "__main__":
 
   existing_records = load_existing_records(output_path)
   
-  parsed_records, unmapped = run(args.bank, args.input, args.categories, args.credit)
+  parsed_records, unmapped = run(args.bank, args.input, args.categories, args.credit, existing_records)
   merged, added, replaced = merge_records(existing_records, parsed_records)
 
   write_statement(output_path, merged)
