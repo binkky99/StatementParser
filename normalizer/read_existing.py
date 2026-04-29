@@ -1,9 +1,9 @@
 from pathlib import Path
-from .base import NormalizedRecord
+from .base import TransactionRecord
 from banks.normalized import NormalizedParser
 from .readers import DelimitedFileReader
 
-def load_existing_records(path: Path) -> dict[str, NormalizedRecord]:
+def load_existing_records(path: Path) -> dict[str, TransactionRecord]:
     if not path.exists():
         return {}
 

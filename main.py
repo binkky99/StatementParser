@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from banks import register_all
-from normalizer.base import NormalizedRecord
+from normalizer.base import TransactionRecord
 from normalizer.readers import CategoryMapReader, DelimitedFileReader
 from normalizer.categorizer import Categorizer
 from normalizer.registry import BankRegistry
@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def run(bank: str, path: Path, categoryPath: Path, credit: bool, existing_records: dict[str, NormalizedRecord]):
+def run(bank: str, path: Path, categoryPath: Path, credit: bool, existing_records: dict[str, TransactionRecord]):
   parser_cls = BankRegistry.get(bank)
   parser = parser_cls()
   parser.credit = credit
@@ -70,17 +70,18 @@ def run(bank: str, path: Path, categoryPath: Path, credit: bool, existing_record
 
   # post process of records.
   for r in records:
-    categorizer.apply(r, existing_records.get(r.key))
+    for s in r.records:
+      categorizer.apply(s, r.description, existing_records.get(r.key))
     
-    if r.category is None:
-      unmapped.add(r.description)
+      if s.category is None:
+        unmapped.add(r.description)
   
   return records, unmapped
 
 def merge_records(
-    existing: dict[str, NormalizedRecord],
-    incoming: list[NormalizedRecord],
-) -> tuple[list[NormalizedRecord], int, int, int]:
+    existing: dict[str, TransactionRecord],
+    incoming: list[TransactionRecord],
+) -> tuple[list[TransactionRecord], int, int, int]:
     added = 0
     updated = 0
 
@@ -90,7 +91,7 @@ def merge_records(
       if old is None:
         existing[record.key] = record
         added += 1
-      elif old != record:
+      elif old != record and len(old.records) == 1:
         existing[record.key] = record
         updated += 1
 

@@ -11,3 +11,7 @@ class BankRegistry:
   @classmethod
   def get(cls, name: str) -> Type[BankStatementParser]:
     return cls._parsers[name.lower()]
+  
+  @classmethod
+  def all_keys(cls) -> list[str]:
+    return list(cls._parsers.keys())
