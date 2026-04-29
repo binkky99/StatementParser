@@ -73,7 +73,8 @@ class BankStatementParser:
       bank: str | None = None,
       member_name: str | None = None,
       records: list[SubTransactionRecord] = None,
-      raw: dict | None = None
+      raw: dict | None = None,
+      key: str | None = None
   ) -> TransactionRecord:
     amount=amount if not self.credit else amount * -1
     if records is None:
@@ -87,6 +88,7 @@ class BankStatementParser:
       member_name=member_name,
       records=records,
       raw=raw,
+      key=key
     )
 
   def validate(self, record: TransactionRecord) -> None:
