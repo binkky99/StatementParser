@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Pattern
-from .base import NormalizedRecord
+from .base import TransactionRecord, SubTransactionRecord
 
 @dataclass(frozen=True)
 class CategoryRule:
@@ -26,13 +26,14 @@ class Categorizer:
     
     def apply(
         self,
-        record: NormalizedRecord,
-        existing: NormalizedRecord | None,
+        record: SubTransactionRecord,
+        description: str,
+        existing: TransactionRecord | None,
     ) -> None:
-        existing_category = existing.category if existing else record.category
+        existing_category = existing.records[0].category if existing is not None and len(existing.records) == 1 else record.category
 
         new_category = self.categorize(
-            record.description,
+            description,
             existing=existing_category,
         )
 

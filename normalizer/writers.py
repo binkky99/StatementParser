@@ -1,11 +1,11 @@
 import csv
 from pathlib import Path
 from typing import Iterable
-from .base import NormalizedRecord
+from .base import TransactionRecord
 
 def write_statement(
   path: Path, 
-  records: Iterable[NormalizedRecord]
+  records: Iterable[TransactionRecord]
 ) -> None:
   with path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f, delimiter="\t")
@@ -16,18 +16,21 @@ def write_statement(
       "description",
       "amount",
       "category",
-      "member_name"
+      "member_name",
+      "key"
     ])
 
     for r in records:
-      writer.writerow([
-        r.bank,
-        r.transaction_date.isoformat(),
-        r.description,
-        str(r.amount),
-        r.category or "",
-        r.member_name or "",
-      ])
+      for s in r.records:
+        writer.writerow([
+          r.bank,
+          r.transaction_date.isoformat(),
+          r.description,
+          str(s.amount),
+          s.category or "",
+          r.member_name or "",
+          r.key
+        ])
 
 def write_unmapped(
   path: Path, 

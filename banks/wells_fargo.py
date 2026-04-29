@@ -7,17 +7,17 @@ class WellsFargoParser(BankStatementParser):
   bank = "wells_fargo"
 
   delimiter = ","
-  has_header = False
+  has_header = True
 
   def parse_rows(self, rows):
     records = []
     for row in rows:
       record = self._record(
         transaction_date=datetime.strptime(
-          row[0], "%m/%d/%Y"
+          row["DATE"], "%m/%d/%Y"
         ).date(),
-        description=row[4],
-        amount=Decimal(row[1]),
+        description=row["DESCRIPTION"],
+        amount=Decimal(row["AMOUNT"]),
         raw=row,
       )
       self.validate(record)

@@ -1,10 +1,11 @@
-from .base import BankStatementParser, NormalizedRecord
+from .base import BankStatementParser, TransactionRecord, SubTransactionRecord
 from .registry import BankRegistry
 from .categorizer import Categorizer
 
 __all__ = [
   "BankStatementParser",
-  "NormalizedRecord",
+  "TransactionRecord",
+  "SubTransactionRecord",
   "BankRegistry",
   "Categorizer",
 ]
