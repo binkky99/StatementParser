@@ -16,6 +16,8 @@ def write_statement(
       "description",
       "amount",
       "category",
+      # "ai_category",
+      "ai_confidence",
       "member_name",
       "key"
     ])
@@ -28,6 +30,8 @@ def write_statement(
           r.description,
           str(s.amount),
           s.category or "",
+          # s.ai_category or "",
+          s.confidence or "",
           r.member_name or "",
           r.key
         ])
