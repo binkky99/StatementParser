@@ -7,6 +7,7 @@ from normalizer.categorizer import Categorizer
 from normalizer.registry import BankRegistry
 from normalizer.writers import write_statement, write_unmapped
 from normalizer.read_existing import load_existing_records
+from normalizer.ai_categorizer import generate_category
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -68,11 +69,17 @@ def run(bank: str, path: Path, categoryPath: Path, credit: bool, existing_record
   categorizer = Categorizer(categoryRows)
   unmapped = set()
 
+  categories = { entry.key: entry for entry in generate_category(records) } 
+
   # post process of records.
   for r in records:
     for s in r.records:
       categorizer.apply(s, r.description, existing_records.get(r.key))
-    
+
+      ai_category = categories.get(r.key)
+      s.ai_category = ai_category.category
+      s.confidence = ai_category.confidence
+
       if s.category is None:
         unmapped.add(r.description)
   

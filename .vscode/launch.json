@@ -8,7 +8,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
       "console": "integratedTerminal",
-      "args": [ "wells_fargo", "C:\\Users\\Chris Gill\\Downloads\\Checking (3).csv", "-c", "D:\\data\\statement-data\\mapping.txt", "-o", "D:\\data\\statement-data\\data"]
+      "args": [ "norm", "D:\\data\\statement-data\\data\\Normalized_Statement.txt", "-c", "D:\\data\\statement-data\\mapping.txt", "-o", "D:\\data\\statement-data\\data"]
     }
   ]
 }

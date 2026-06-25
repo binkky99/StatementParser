@@ -43,6 +43,8 @@ class TransactionRecord:
 class SubTransactionRecord:
   amount: Decimal
   category: Optional[str] = None
+  ai_category: Optional[str] = None
+  confidence: int = 0
   raw: dict | None = field(default=None, compare=False)
 
   def __post_init__(self) -> None:
