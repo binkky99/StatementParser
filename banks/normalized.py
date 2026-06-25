@@ -35,6 +35,7 @@ class NormalizedParser(BankStatementParser):
         description=first["description"],
         amount=amount,
         bank=first["bank"],
+        key=first["key"],
         member_name=first["member_name"],
         records=[SubTransactionRecord(Decimal(entry["amount"]), entry["category"], entry) for entry in value],
         raw=row,
