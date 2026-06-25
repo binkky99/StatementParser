@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "name": "Python Debugger: Current File with Arguments",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "args": [ "norm", "D:\\data\\statement-data\\data\\Normalized_Statement.txt", "-c", "D:\\data\\statement-data\\mapping.txt"]
+    }
+  ]
+}
